@@ -19,10 +19,9 @@ Ensure you have the following installed on your machine:
 3. Run the following command to clone the repository:
 
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/devbn3li/AI-Blogs-Automation-Creator
    ```
 
-   Replace `<repository-url>` with the URL of the repository.
 4. Navigate to the project directory:
 
    ```bash
