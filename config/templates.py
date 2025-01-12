@@ -22,6 +22,9 @@ Each post should include:
 - Keywords for SEO and a meta description.
 - Links to other relevant pages (deep linking).
 - Content targeting diverse markets.
+- A call-to-action to schedule a consultation.
+- 1000 words or more.
+- be creative and engaging.
 
 The company's data is: {company_data}
 """

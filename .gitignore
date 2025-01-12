@@ -1,4 +1,5 @@
 venv/
 output/
+generated_content/
 __pycache__/
 .env

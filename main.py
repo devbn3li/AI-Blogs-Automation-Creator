@@ -2,7 +2,7 @@ import os
 import random
 from datetime import datetime
 from config.config import topics, content_types, target_markets, services, templates, OUTPUT_DIR, MAX_BLOGS
-from ai.model import generate_content
+from ai.model import get_chat_response
 
 # Generate a slug for the title
 def generate_slug(title):
@@ -62,23 +62,20 @@ def generate_cta(service):
     }
 
 # Save the blog as a Markdown file
-def save_blog(content):
+def save_blog(content, data):
     file_name = generate_slug(content["title"]) + ".md"
     file_path = os.path.join(OUTPUT_DIR, file_name)
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     with open(file_path, "w", encoding="utf-8") as file:
-        file.write(f"# {content['title']}\n\n")
-        file.write(f"**Meta Description:** {content['meta_description']}\n\n")
-        file.write(f"**Keywords:** {', '.join(content['keywords'])}\n\n")
-        for section in content["sections"]:
-            file.write(f"## {section['title']}\n{section['content']}\n\n")
-        file.write("### Internal Links:\n")
-        for link in content["internal_links"]:
-            file.write(f"- [{link['text']}]({link['url']})\n")
-        file.write("\n### Call to Action:\n")
-        file.write(f"{content['call_to_action']['text']}\n")
-        file.write(f"[{content['call_to_action']['button_text']}]({content['call_to_action']['url']})\n")
+        file.write(str(data))
+
     return file_path
+
+def save_to_file(content):
+    file_dir = os.path.join(OUTPUT_DIR, 'output2.md')
+    with open(file_dir, 'w' , encoding= 'utf-8') as f:
+        f.write(str(content))
+    return file_dir
 
 # Main function to generate blogs
 def generate_blogs():
@@ -107,8 +104,24 @@ def generate_blogs():
             "created_at": datetime.now().isoformat(),
         }
 
-        file_path = save_blog(content)
-        print(f"Saved blog: {file_path}")
+        # file_path = save_blog(content)
+        # print(f"Saved blog: {file_path}")
+        file_path = os.path.join('config', 'template_refrence.md')
+        generated_content = ''
+        # Read the generated content from the file
+        with open(file_path, 'r', encoding='utf-8') as file:
+            generated_content = file.read()
+
+        prompt = f"generate a full blog using this content \n```{content}```\n use all in it to make good blog contain 1000 word at least and be creative and engaging and being like human write it and return a md file with the same structure as this \n {generated_content}\n but with the new content" 
+        # print(f"Prompt: {prompt}")
+        result = get_chat_response([{"role":"user","content":prompt}])
+        if result:
+            result = result.choices[0].message.content.replace('```','').strip()
+            # Save the generated blog to a file
+            file_dir = save_blog(content=content, data=result)
+            print(f"Saved blog: {file_dir}")
+        else:
+            print("Error generating content. Skipping blog...")
 
 if __name__ == "__main__":
     generate_blogs()
